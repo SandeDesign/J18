@@ -29,7 +29,7 @@ const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children }) => {
 
   const navigation = [
     { name: 'Dashboard', href: '/customer/dashboard', icon: LayoutDashboard },
-    { name: 'Shop Beats', href: '/shop/beats', icon: Music },
+    { name: 'Shop Beats', href: '/customer/shop', icon: Music },
     { name: 'My Orders', href: '/customer/orders', icon: ShoppingCart },
     { name: 'Downloads', href: '/customer/downloads', icon: Download },
     { name: 'Profile', href: '/customer/profile', icon: User },
