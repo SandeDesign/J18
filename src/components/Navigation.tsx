@@ -47,13 +47,14 @@ export default function Navigation({ cartItemCount = 0, onCartClick }: Navigatio
               alt="Jonna Rincon"
               className="w-20 h-20 group-hover:scale-110 transition-all duration-300"
               style={{
-                filter: 'drop-shadow(0 0 20px rgba(147, 51, 234, 0.8)) drop-shadow(0 0 40px rgba(236, 72, 153, 0.6))',
+                filter: 'drop-shadow(0 0 20px rgba(147, 51, 234, 0.8)) drop-shadow(0 0 40px rgba(236, 72, 153, 0.6)) drop-shadow(0 0 60px rgba(147, 51, 234, 0.4))',
               }}
             />
             <span
-              className="text-2xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+              className="text-2xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text"
               style={{
-                filter: 'drop-shadow(0 0 10px rgba(147, 51, 234, 0.8)) drop-shadow(0 0 20px rgba(236, 72, 153, 0.6))',
+                WebkitTextFillColor: 'transparent',
+                textShadow: '0 0 20px rgba(147, 51, 234, 0.9), 0 0 40px rgba(236, 72, 153, 0.7), 0 0 60px rgba(147, 51, 234, 0.5), 0 0 80px rgba(236, 72, 153, 0.3)',
               }}
             >
               JONNA RINCON
