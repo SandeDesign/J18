@@ -29,8 +29,10 @@ const RegisterPage: React.FC = () => {
     setLoading(true);
 
     try {
-      await signUp(email, password, displayName);
-      navigate('/');
+      const user = await signUp(email, password, displayName);
+
+      // All new registrations are customers by default, redirect to customer dashboard
+      navigate('/customer/dashboard');
     } catch (err: any) {
       setError(err.message || 'Failed to create account');
     } finally {

@@ -43,16 +43,24 @@ class AuthService {
         await updateProfile(firebaseUser, { displayName });
       }
 
-      const userData: User = {
+      // Create user data object, only including defined fields
+      const userData: any = {
         uid: firebaseUser.uid,
         email: firebaseUser.email!,
-        displayName: displayName || firebaseUser.displayName || undefined,
-        photoURL: firebaseUser.photoURL || undefined,
         role: 'user', // Default role
-        createdAt: serverTimestamp() as any,
-        updatedAt: serverTimestamp() as any,
-        lastLoginAt: serverTimestamp() as any,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        lastLoginAt: serverTimestamp(),
       };
+
+      // Only add optional fields if they have values
+      if (displayName || firebaseUser.displayName) {
+        userData.displayName = displayName || firebaseUser.displayName;
+      }
+
+      if (firebaseUser.photoURL) {
+        userData.photoURL = firebaseUser.photoURL;
+      }
 
       await setDoc(doc(db, 'users', firebaseUser.uid), userData);
       this.currentUser = userData;

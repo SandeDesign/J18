@@ -1,75 +1,112 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Menu, X, Music } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 interface NavigationProps {
-  cartItemCount: number;
-  onCartClick: () => void;
+  cartItemCount?: number;
+  onCartClick?: () => void;
 }
 
-export default function Navigation({ cartItemCount, onCartClick }: NavigationProps) {
+export default function Navigation({ cartItemCount = 0, onCartClick }: NavigationProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      navigate('/');
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
+  };
+
+  const getDashboardLink = () => {
+    if (!user) return '/login';
+
+    switch (user.role) {
+      case 'admin':
+        return '/admin/dashboard';
+      case 'artist':
+        return '/artist/dashboard';
+      case 'user':
+        return '/customer/dashboard';
+      default:
+        return '/login';
+    }
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-30 glass border-b border-purple-500/30 backdrop-blur-xl shadow-xl">
       <div className="max-w-7xl mx-auto px-4 py-5">
         <div className="flex items-center justify-between">
-          <a href="#" className="flex items-center gap-3 group">
+          <Link to="/" className="flex items-center gap-3 group">
             <Music className="w-10 h-10 text-purple-400 neon-glow group-hover:scale-110 group-hover:rotate-12 transition-all duration-300" />
             <span className="text-2xl font-black neon-glow bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">JONNA RINCON</span>
-          </a>
+          </Link>
 
           <div className="hidden md:flex items-center gap-8">
-            <a
-              href="#"
+            <Link
+              to="/"
               className="text-white hover:text-purple-400 transition-all duration-300 font-bold hover:scale-110 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-purple-400 hover:after:w-full after:transition-all after:duration-300"
             >
               Home
-            </a>
-            <a
-              href="#beats"
+            </Link>
+            <Link
+              to="/shop/beats"
               className="text-white hover:text-purple-400 transition-all duration-300 font-bold hover:scale-110 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-purple-400 hover:after:w-full after:transition-all after:duration-300"
             >
-              Beats
-            </a>
-            <a
-              href="#music"
-              className="text-white hover:text-purple-400 transition-all duration-300 font-bold hover:scale-110 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-purple-400 hover:after:w-full after:transition-all after:duration-300"
-            >
-              Music
-            </a>
-            <a
-              href="#contact"
-              className="text-white hover:text-purple-400 transition-all duration-300 font-bold hover:scale-110 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-purple-400 hover:after:w-full after:transition-all after:duration-300"
-            >
-              Contact
-            </a>
+              Shop
+            </Link>
           </div>
 
           <div className="flex items-center gap-4">
-            <Link
-              to="/login"
-              className="hidden md:block px-4 py-2 glass rounded-lg neon-border-subtle hover:neon-border transition-all hover:scale-105 text-white font-medium"
-            >
-              Login
-            </Link>
-            <Link
-              to="/admin/dashboard"
-              className="hidden md:block px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all hover:scale-105 text-white font-medium"
-            >
-              Admin
-            </Link>
-            <button
-              onClick={onCartClick}
-              className="relative p-3 glass rounded-full neon-border-subtle hover:neon-border transition-all hover:scale-110 active:scale-95 group/cart"
-            >
-              <ShoppingCart className="w-6 h-6 group-hover/cart:animate-pulse" />
-              {cartItemCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-7 h-7 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center text-xs font-black neon-border-subtle animate-pulse">
-                  {cartItemCount}
-                </span>
-              )}
-            </button>
+            {user ? (
+              <>
+                <Link
+                  to={getDashboardLink()}
+                  className="hidden md:block px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all hover:scale-105 text-white font-medium"
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={handleSignOut}
+                  className="hidden md:block px-4 py-2 glass rounded-lg neon-border-subtle hover:neon-border transition-all hover:scale-105 text-white font-medium"
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="hidden md:block px-4 py-2 glass rounded-lg neon-border-subtle hover:neon-border transition-all hover:scale-105 text-white font-medium"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  className="hidden md:block px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all hover:scale-105 text-white font-medium"
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
+
+            {onCartClick && (
+              <button
+                onClick={onCartClick}
+                className="relative p-3 glass rounded-full neon-border-subtle hover:neon-border transition-all hover:scale-110 active:scale-95 group/cart"
+              >
+                <ShoppingCart className="w-6 h-6 group-hover/cart:animate-pulse" />
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-7 h-7 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center text-xs font-black neon-border-subtle animate-pulse">
+                    {cartItemCount}
+                  </span>
+                )}
+              </button>
+            )}
 
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -83,34 +120,57 @@ export default function Navigation({ cartItemCount, onCartClick }: NavigationPro
         {isMenuOpen && (
           <div className="md:hidden mt-4 pt-4 border-t border-purple-500/30">
             <div className="flex flex-col gap-4">
-              <a
-                href="#"
+              <Link
+                to="/"
                 onClick={() => setIsMenuOpen(false)}
                 className="text-white hover:text-purple-400 transition-colors font-medium"
               >
                 Home
-              </a>
-              <a
-                href="#beats"
+              </Link>
+              <Link
+                to="/shop/beats"
                 onClick={() => setIsMenuOpen(false)}
                 className="text-white hover:text-purple-400 transition-colors font-medium"
               >
-                Beats
-              </a>
-              <a
-                href="#music"
-                onClick={() => setIsMenuOpen(false)}
-                className="text-white hover:text-purple-400 transition-colors font-medium"
-              >
-                Music
-              </a>
-              <a
-                href="#contact"
-                onClick={() => setIsMenuOpen(false)}
-                className="text-white hover:text-purple-400 transition-colors font-medium"
-              >
-                Contact
-              </a>
+                Shop
+              </Link>
+              {user ? (
+                <>
+                  <Link
+                    to={getDashboardLink()}
+                    onClick={() => setIsMenuOpen(false)}
+                    className="text-white hover:text-purple-400 transition-colors font-medium"
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      handleSignOut();
+                    }}
+                    className="text-white hover:text-purple-400 transition-colors font-medium text-left"
+                  >
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="text-white hover:text-purple-400 transition-colors font-medium"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/register"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="text-white hover:text-purple-400 transition-colors font-medium"
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         )}
