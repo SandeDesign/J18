@@ -13,6 +13,12 @@
 }
 
 @layer utilities {
+  .object-right {
+    object-position: right;
+  }
+}
+
+@layer utilities {
   .neon-glow {
     text-shadow: 0 0 10px #c77dff, 0 0 20px #c77dff, 0 0 30px #9d4edd, 0 0 40px #9d4edd, 0 0 50px #7b2cbf;
     animation: glow-pulse 3s ease-in-out infinite;
