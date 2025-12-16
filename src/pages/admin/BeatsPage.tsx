@@ -3,7 +3,7 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import { useBeats } from '../../hooks/useBeats';
 import { beatService, fileUploadService } from '../../lib/firebase/services';
 import { Beat } from '../../lib/firebase/types';
-import { Plus, Edit, Trash2, Play, Pause, Upload } from 'lucide-react';
+import { Plus, Edit, Trash2, Play, Pause } from 'lucide-react';
 
 const BeatsPage: React.FC = () => {
   const { beats, loading } = useBeats();
@@ -269,7 +269,7 @@ const BeatFormModal: React.FC<BeatFormModalProps> = ({ beat, onClose, onSave }) 
     setSaving(true);
 
     try {
-      const beatData = {
+      const beatData: any = {
         title: formData.title,
         artist: formData.artist,
         bpm: formData.bpm,
@@ -279,7 +279,7 @@ const BeatFormModal: React.FC<BeatFormModalProps> = ({ beat, onClose, onSave }) 
         audioUrl: formData.audioUrl,
         artworkUrl: formData.artworkUrl,
         slug: formData.slug || formData.title.toLowerCase().replace(/\s+/g, '-'),
-        status: formData.status as Beat['status'],
+        status: formData.status,
         featured: formData.featured,
         trending: false,
         licenses: {
