@@ -9,7 +9,6 @@ export const useContent = (filters?: {
 }) => {
   const [content, setContent] = useState<Content[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const unsubscribe = contentService.subscribeToContent(
@@ -23,7 +22,7 @@ export const useContent = (filters?: {
     return () => unsubscribe();
   }, [filters?.type, filters?.status, filters?.featured]);
 
-  return { content, loading, error };
+  return { content, loading };
 };
 
 export const usePublishedContent = (type?: ContentType) => {

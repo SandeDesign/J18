@@ -3,7 +3,7 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import { useOrders } from '../../hooks/useOrders';
 import { orderService } from '../../lib/firebase/services';
 import { OrderStatus } from '../../lib/firebase/types';
-import { Eye, Download } from 'lucide-react';
+import { Eye } from 'lucide-react';
 
 const OrdersPage: React.FC = () => {
   const { orders, loading } = useOrders();
