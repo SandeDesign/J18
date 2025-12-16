@@ -6,7 +6,7 @@ export default function Hero() {
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 w-full h-full">
         <img
-          src="/IMG_1027.jpg"
+          src="/TN-DJSet.jpgg"
           alt="Jonna Rincon"
           className="w-full h-full object-cover"
         />
