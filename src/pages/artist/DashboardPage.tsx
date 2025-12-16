@@ -4,7 +4,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import { collaborationService } from '../../lib/firebase/services/collaborationService';
 import { orderService } from '../../lib/firebase/services/orderService';
 import { Collaboration, Order } from '../../lib/firebase/types';
-import Navigation from '../../components/Navigation';
+import ArtistLayout from '../../components/artist/ArtistLayout';
+import { Handshake, Music, DollarSign, TrendingUp } from 'lucide-react';
 
 const ArtistDashboard: React.FC = () => {
   const { user } = useAuth();
@@ -23,18 +24,15 @@ const ArtistDashboard: React.FC = () => {
 
     const loadDashboardData = async () => {
       try {
-        // Get collaborations
         const collabData = await collaborationService.getAll();
         const userCollabs = collabData.filter(
           (c) => c.clientEmail === user.email || c.assignedTo === user.uid
         );
-        setCollaborations(userCollabs);
+        setCollaborations(userCollabs.slice(0, 5));
 
-        // Get orders
         const orderData = await orderService.getOrdersByCustomer(user.email);
         setOrders(orderData);
 
-        // Calculate stats
         const activeCollabs = userCollabs.filter(
           (c) => c.status === 'in_progress' || c.status === 'agreed' || c.status === 'signed'
         ).length;
@@ -65,172 +63,176 @@ const ArtistDashboard: React.FC = () => {
     loadDashboardData();
   }, [user]);
 
+  const statsCards = [
+    {
+      name: 'Active Collaborations',
+      value: stats.activeCollaborations,
+      icon: Handshake,
+      change: `${stats.completedCollaborations} completed`,
+      changeType: 'positive',
+    },
+    {
+      name: 'Beats Purchased',
+      value: stats.beatsPurchased,
+      icon: Music,
+      change: stats.beatsPurchased > 0 ? 'From Jonna Rincon' : 'Browse beats',
+      changeType: 'neutral',
+    },
+    {
+      name: 'Total Spent',
+      value: `€${stats.totalSpent.toFixed(2)}`,
+      icon: DollarSign,
+      change: 'On beats & licenses',
+      changeType: 'neutral',
+    },
+  ];
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 text-white">
-        <Navigation />
-        <div className="container mx-auto px-4 py-12">
-          <div className="flex justify-center items-center h-64">
-            <div className="text-xl">Loading...</div>
-          </div>
+      <ArtistLayout>
+        <div className="flex justify-center items-center h-64">
+          <div className="text-xl text-white">Loading...</div>
         </div>
-      </div>
+      </ArtistLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      <Navigation />
-
-      <div className="container mx-auto px-4 py-12">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Artist Dashboard</h1>
-          <p className="text-gray-400">Welcome back, {user?.displayName || 'Artist'}!</p>
+    <ArtistLayout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-bold text-white">Artist Dashboard</h1>
+          <p className="text-gray-400 mt-2">Welcome back, {user?.displayName || 'Artist'}!</p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-          <div className="bg-gray-800 rounded-lg p-6">
-            <div className="text-gray-400 text-sm mb-2">Active Collaborations</div>
-            <div className="text-3xl font-bold">{stats.activeCollaborations}</div>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {statsCards.map((stat) => {
+            const Icon = stat.icon;
+            return (
+              <div
+                key={stat.name}
+                className="bg-gray-800 border border-gray-700 rounded-xl p-6 hover:border-orange-500/50 transition-colors"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-400">{stat.name}</p>
+                    <p className="text-3xl font-bold text-white mt-2">{stat.value}</p>
+                    <p
+                      className={`text-sm mt-2 ${
+                        stat.changeType === 'positive' ? 'text-green-400' : 'text-gray-400'
+                      }`}
+                    >
+                      {stat.change}
+                    </p>
+                  </div>
+                  <div className="bg-gradient-to-r from-orange-600 to-red-600 p-4 rounded-xl">
+                    <Icon size={32} className="text-white" />
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Recent Collaborations */}
+        <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold text-white">Active Collaborations</h2>
+            <Link to="/artist/collaborations" className="text-orange-400 hover:text-orange-300 text-sm">
+              View All →
+            </Link>
           </div>
 
-          <div className="bg-gray-800 rounded-lg p-6">
-            <div className="text-gray-400 text-sm mb-2">Completed Projects</div>
-            <div className="text-3xl font-bold">{stats.completedCollaborations}</div>
-          </div>
-
-          <div className="bg-gray-800 rounded-lg p-6">
-            <div className="text-gray-400 text-sm mb-2">Beats Purchased</div>
-            <div className="text-3xl font-bold">{stats.beatsPurchased}</div>
-          </div>
-
-          <div className="bg-gray-800 rounded-lg p-6">
-            <div className="text-gray-400 text-sm mb-2">Total Spent</div>
-            <div className="text-3xl font-bold">€{stats.totalSpent.toFixed(2)}</div>
-          </div>
+          {collaborations.filter((c) => c.status === 'in_progress' || c.status === 'signed').length === 0 ? (
+            <div className="text-center py-12">
+              <div className="text-4xl mb-4">🤝</div>
+              <p className="text-xl text-gray-300 mb-2">No active collaborations</p>
+              <p className="text-gray-400 mb-6">Check your collaboration page for inquiries</p>
+              <Link
+                to="/artist/collaborations"
+                className="inline-block bg-gradient-to-r from-orange-600 to-red-600 px-6 py-3 rounded-lg text-white font-medium hover:from-orange-700 hover:to-red-700 transition-all"
+              >
+                View Collaborations
+              </Link>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {collaborations
+                .filter((c) => c.status === 'in_progress' || c.status === 'signed')
+                .map((collab) => (
+                  <div
+                    key={collab.id}
+                    className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg hover:bg-gray-700 transition-colors"
+                  >
+                    <div className="flex-1">
+                      <p className="text-white font-medium">{collab.title}</p>
+                      <p className="text-sm text-gray-400 capitalize">
+                        {collab.type} • {collab.status.replace('_', ' ')}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      {collab.budget && (
+                        <p className="text-white font-semibold">€{collab.budget.toFixed(2)}</p>
+                      )}
+                      {collab.deadline && (
+                        <p className="text-xs text-yellow-400">
+                          Due: {collab.deadline.toDate?.()?.toLocaleDateString() || 'N/A'}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+            </div>
+          )}
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Link
             to="/artist/collaborations"
-            className="bg-purple-600 hover:bg-purple-700 rounded-lg p-4 text-center transition"
+            className="bg-gradient-to-r from-purple-600 to-pink-600 p-6 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all"
           >
-            <div className="text-2xl mb-2">🤝</div>
-            <div className="font-semibold">Collaborations</div>
+            <Handshake size={32} className="text-white mb-3" />
+            <h3 className="text-white font-semibold">Collaborations</h3>
+            <p className="text-purple-100 text-sm mt-1">Manage projects</p>
           </Link>
 
           <Link
             to="/artist/beats"
-            className="bg-gray-800 hover:bg-gray-700 rounded-lg p-4 text-center transition"
+            className="bg-gradient-to-r from-blue-600 to-cyan-600 p-6 rounded-xl hover:from-blue-700 hover:to-cyan-700 transition-all"
           >
-            <div className="text-2xl mb-2">🎵</div>
-            <div className="font-semibold">Browse Beats</div>
+            <Music size={32} className="text-white mb-3" />
+            <h3 className="text-white font-semibold">Browse Beats</h3>
+            <p className="text-blue-100 text-sm mt-1">Shop from Jonna</p>
           </Link>
 
           <Link
             to="/customer/orders"
-            className="bg-gray-800 hover:bg-gray-700 rounded-lg p-4 text-center transition"
+            className="bg-gradient-to-r from-green-600 to-teal-600 p-6 rounded-xl hover:from-green-700 hover:to-teal-700 transition-all"
           >
-            <div className="text-2xl mb-2">📦</div>
-            <div className="font-semibold">My Purchases</div>
+            <DollarSign size={32} className="text-white mb-3" />
+            <h3 className="text-white font-semibold">My Purchases</h3>
+            <p className="text-green-100 text-sm mt-1">View orders</p>
           </Link>
 
           <Link
             to="/artist/profile"
-            className="bg-gray-800 hover:bg-gray-700 rounded-lg p-4 text-center transition"
+            className="bg-gradient-to-r from-orange-600 to-red-600 p-6 rounded-xl hover:from-orange-700 hover:to-red-700 transition-all"
           >
-            <div className="text-2xl mb-2">👤</div>
-            <div className="font-semibold">Profile</div>
+            <TrendingUp size={32} className="text-white mb-3" />
+            <h3 className="text-white font-semibold">Profile</h3>
+            <p className="text-orange-100 text-sm mt-1">Manage account</p>
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Active Collaborations */}
-          <div className="bg-gray-800 rounded-lg p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold">Active Collaborations</h2>
-              <Link to="/artist/collaborations" className="text-purple-400 hover:text-purple-300">
-                View All →
-              </Link>
-            </div>
-
-            {collaborations.filter((c) => c.status === 'in_progress' || c.status === 'signed').length === 0 ? (
-              <div className="text-center py-8 text-gray-400">
-                <div className="text-3xl mb-3">🤝</div>
-                <p>No active collaborations</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {collaborations
-                  .filter((c) => c.status === 'in_progress' || c.status === 'signed')
-                  .slice(0, 3)
-                  .map((collab) => (
-                    <div key={collab.id} className="bg-gray-700 rounded-lg p-4">
-                      <div className="font-semibold mb-1">{collab.title}</div>
-                      <div className="text-sm text-gray-400 mb-2 capitalize">
-                        {collab.type} • {collab.status.replace('_', ' ')}
-                      </div>
-                      {collab.deadline && (
-                        <div className="text-xs text-yellow-400">
-                          Deadline: {collab.deadline.toDate?.()?.toLocaleDateString() || 'N/A'}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-              </div>
-            )}
-          </div>
-
-          {/* Recent Purchases */}
-          <div className="bg-gray-800 rounded-lg p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold">Recent Purchases</h2>
-              <Link to="/customer/orders" className="text-purple-400 hover:text-purple-300">
-                View All →
-              </Link>
-            </div>
-
-            {orders.filter((o) => o.status === 'completed').length === 0 ? (
-              <div className="text-center py-8 text-gray-400">
-                <div className="text-3xl mb-3">🎵</div>
-                <p className="mb-3">No purchases yet</p>
-                <Link
-                  to="/artist/beats"
-                  className="inline-block bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-sm transition"
-                >
-                  Browse Beats
-                </Link>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {orders
-                  .filter((o) => o.status === 'completed')
-                  .slice(0, 3)
-                  .map((order) => (
-                    <div key={order.id} className="bg-gray-700 rounded-lg p-4">
-                      <div className="font-semibold mb-1">{order.orderNumber}</div>
-                      <div className="text-sm text-gray-400 mb-2">
-                        {order.items.length} beat(s) • €{order.total.toFixed(2)}
-                      </div>
-                      <div className="text-xs text-green-400">
-                        {order.completedAt?.toDate?.()?.toLocaleDateString() || 'Completed'}
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            )}
-          </div>
-        </div>
-
         {/* Info Banner */}
-        <div className="mt-8 bg-purple-900/30 border border-purple-700 rounded-lg p-6">
+        <div className="bg-orange-900/30 border border-orange-700 rounded-xl p-6">
           <div className="flex items-start gap-4">
             <div className="text-3xl">🎤</div>
             <div>
-              <h3 className="font-bold text-lg mb-2">Collaborate with Jonna Rincon</h3>
+              <h3 className="font-bold text-lg text-white mb-2">Collaborate with Jonna Rincon</h3>
               <p className="text-gray-300 mb-4">
                 Work together on exclusive tracks, remixes, and productions. Get access to premium beats
                 and collaborate on exciting projects.
@@ -238,13 +240,13 @@ const ArtistDashboard: React.FC = () => {
               <div className="flex gap-4">
                 <Link
                   to="/artist/collaborations"
-                  className="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded-lg transition"
+                  className="bg-gradient-to-r from-orange-600 to-red-600 px-6 py-2 rounded-lg text-white font-medium hover:from-orange-700 hover:to-red-700 transition-all"
                 >
                   View Collaborations
                 </Link>
                 <Link
                   to="/artist/beats"
-                  className="bg-gray-700 hover:bg-gray-600 px-6 py-2 rounded-lg transition"
+                  className="bg-gray-700 hover:bg-gray-600 px-6 py-2 rounded-lg text-white font-medium transition-all"
                 >
                   Browse Beats
                 </Link>
@@ -253,7 +255,7 @@ const ArtistDashboard: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+    </ArtistLayout>
   );
 };
 
