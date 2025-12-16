@@ -43,7 +43,7 @@ export default function Navigation({ cartItemCount = 0, onCartClick }: Navigatio
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
             <img
-              src="/logo.png"
+              src="/Logo.png"
               alt="Jonna Rincon"
               className="w-10 h-10 neon-glow group-hover:scale-110 group-hover:rotate-12 transition-all duration-300"
             />
