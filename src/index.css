@@ -16,6 +16,10 @@
   .object-right {
     object-position: right;
   }
+
+  .object-far-left {
+    object-position: 20% center;
+  }
 }
 
 @layer utilities {
