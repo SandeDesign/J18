@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { collaborationService } from '../../lib/firebase/services/collaborationService';
 import { Collaboration } from '../../lib/firebase/types';
-import Navigation from '../../components/Navigation';
+import ArtistLayout from '../../components/artist/ArtistLayout';
+import { Handshake, Mail } from 'lucide-react';
 
 const ArtistCollaborations: React.FC = () => {
   const { user } = useAuth();
@@ -39,31 +40,21 @@ const ArtistCollaborations: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 text-white">
-        <Navigation />
-        <div className="container mx-auto px-4 py-12">
-          <div className="flex justify-center items-center h-64">
-            <div className="text-xl">Loading collaborations...</div>
-          </div>
+      <ArtistLayout>
+        <div className="flex justify-center items-center h-64">
+          <div className="text-xl text-white">Loading collaborations...</div>
         </div>
-      </div>
+      </ArtistLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      <Navigation />
-
-      <div className="container mx-auto px-4 py-12">
+    <ArtistLayout>
+      <div className="space-y-6">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-4 mb-4">
-            <Link to="/artist/dashboard" className="text-gray-400 hover:text-white">
-              ← Back to Dashboard
-            </Link>
-          </div>
-          <h1 className="text-3xl font-bold mb-2">My Collaborations</h1>
-          <p className="text-gray-400">Manage your collaboration projects with Jonna Rincon</p>
+        <div>
+          <h1 className="text-3xl font-bold text-white">My Collaborations</h1>
+          <p className="text-gray-400 mt-2">Manage your collaboration projects with Jonna Rincon</p>
         </div>
 
         {/* Filter Tabs */}
@@ -254,7 +245,7 @@ const ArtistCollaborations: React.FC = () => {
           </div>
         )}
       </div>
-    </div>
+    </ArtistLayout>
   );
 };
 
