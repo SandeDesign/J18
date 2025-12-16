@@ -8,7 +8,7 @@ export default function Hero() {
         <img
           src="/TN-DJSet.jpg"
           alt="Jonna Rincon"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-left"
         />
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent opacity-60"></div>
