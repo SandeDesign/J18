@@ -236,6 +236,7 @@ const BeatFormModal: React.FC<BeatFormModalProps> = ({ beat, onClose, onSave }) 
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  // @ts-ignore - Reserved for future file upload UI
   const handleFileUpload = async (
     file: File,
     type: 'audio' | 'image'
@@ -399,7 +400,7 @@ const BeatFormModal: React.FC<BeatFormModalProps> = ({ beat, onClose, onSave }) 
               <label className="block text-sm font-medium text-gray-300 mb-2">Status</label>
               <select
                 value={formData.status}
-                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value as Beat['status'] })}
                 className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
               >
                 <option value="draft">Draft</option>

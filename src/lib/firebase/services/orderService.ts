@@ -15,7 +15,7 @@ import {
   Unsubscribe,
 } from 'firebase/firestore';
 import { db } from '../config';
-import { Order, OrderStatus, PaginatedResponse } from '../types';
+import { Order, OrderStatus } from '../types';
 import { authService } from './authService';
 
 class OrderService {

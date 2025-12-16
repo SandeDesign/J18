@@ -1,5 +1,5 @@
 // Bolt Database Setup for Beat Store
-import { Beat, Order, CartItem } from './types';
+import { Beat, Order } from './types';
 
 // In-memory database simulation for Bolt
 class BoltDatabase {

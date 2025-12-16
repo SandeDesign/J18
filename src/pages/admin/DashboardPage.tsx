@@ -6,8 +6,8 @@ import { beatService, orderService } from '../../lib/firebase/services';
 import { TrendingUp, DollarSign, ShoppingBag, Music, Handshake, Users } from 'lucide-react';
 
 const DashboardPage: React.FC = () => {
-  const { stats: orderStats, loading: orderLoading } = useOrderStatistics();
-  const { stats: collabStats, loading: collabLoading } = useCollaborationStats();
+  const { stats: orderStats } = useOrderStatistics();
+  const { stats: collabStats } = useCollaborationStats();
   const [totalBeats, setTotalBeats] = useState(0);
   const [recentOrders, setRecentOrders] = useState<any[]>([]);
 
