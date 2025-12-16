@@ -45,9 +45,19 @@ export default function Navigation({ cartItemCount = 0, onCartClick }: Navigatio
             <img
               src="/Logo.png"
               alt="Jonna Rincon"
-              className="w-10 h-10 neon-glow group-hover:scale-110 group-hover:rotate-12 transition-all duration-300"
+              className="w-20 h-20 group-hover:scale-110 transition-all duration-300"
+              style={{
+                filter: 'drop-shadow(0 0 20px rgba(147, 51, 234, 0.8)) drop-shadow(0 0 40px rgba(236, 72, 153, 0.6))',
+              }}
             />
-            <span className="text-2xl font-black neon-glow bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">JONNA RINCON</span>
+            <span
+              className="text-2xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+              style={{
+                filter: 'drop-shadow(0 0 10px rgba(147, 51, 234, 0.8)) drop-shadow(0 0 20px rgba(236, 72, 153, 0.6))',
+              }}
+            >
+              JONNA RINCON
+            </span>
           </Link>
 
           <div className="hidden md:flex items-center gap-8">
