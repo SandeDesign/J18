@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { orderService } from '../../lib/firebase/services/orderService';
 import { Order, OrderItem } from '../../lib/firebase/types';
-import Navigation from '../../components/Navigation';
+import CustomerLayout from '../../components/customer/CustomerLayout';
+import { Download, FileText, Mail } from 'lucide-react';
 
 interface DownloadableItem extends OrderItem {
   orderId: string;
@@ -64,31 +65,21 @@ const CustomerDownloads: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 text-white">
-        <Navigation />
-        <div className="container mx-auto px-4 py-12">
-          <div className="flex justify-center items-center h-64">
-            <div className="text-xl">Loading downloads...</div>
-          </div>
+      <CustomerLayout>
+        <div className="flex justify-center items-center h-64">
+          <div className="text-xl text-white">Loading downloads...</div>
         </div>
-      </div>
+      </CustomerLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      <Navigation />
-
-      <div className="container mx-auto px-4 py-12">
+    <CustomerLayout>
+      <div className="space-y-6">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-4 mb-4">
-            <Link to="/customer/dashboard" className="text-gray-400 hover:text-white">
-              ← Back to Dashboard
-            </Link>
-          </div>
-          <h1 className="text-3xl font-bold mb-2">My Downloads</h1>
-          <p className="text-gray-400">Access all your purchased beats and licenses</p>
+        <div>
+          <h1 className="text-3xl font-bold text-white">My Downloads</h1>
+          <p className="text-gray-400 mt-2">Access all your purchased beats and licenses</p>
         </div>
 
         {/* Info Banner */}
@@ -194,7 +185,7 @@ const CustomerDownloads: React.FC = () => {
           </div>
         )}
       </div>
-    </div>
+    </CustomerLayout>
   );
 };
 
