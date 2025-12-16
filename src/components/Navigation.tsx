@@ -46,6 +46,18 @@ export default function Navigation({ cartItemCount, onCartClick }: NavigationPro
           </div>
 
           <div className="flex items-center gap-4">
+            <a
+              href="/login"
+              className="hidden md:block px-4 py-2 glass rounded-lg neon-border-subtle hover:neon-border transition-all hover:scale-105 text-white font-medium"
+            >
+              Login
+            </a>
+            <a
+              href="/admin/dashboard"
+              className="hidden md:block px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all hover:scale-105 text-white font-medium"
+            >
+              Admin
+            </a>
             <button
               onClick={onCartClick}
               className="relative p-3 glass rounded-full neon-border-subtle hover:neon-border transition-all hover:scale-110 active:scale-95 group/cart"
