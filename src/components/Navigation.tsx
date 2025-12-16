@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Menu, X, Music } from 'lucide-react';
+import { ShoppingCart, Menu, X } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 interface NavigationProps {
@@ -42,7 +42,11 @@ export default function Navigation({ cartItemCount = 0, onCartClick }: Navigatio
       <div className="max-w-7xl mx-auto px-4 py-5">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
-            <Music className="w-10 h-10 text-purple-400 neon-glow group-hover:scale-110 group-hover:rotate-12 transition-all duration-300" />
+            <img
+              src="/logo.png"
+              alt="Jonna Rincon"
+              className="w-10 h-10 neon-glow group-hover:scale-110 group-hover:rotate-12 transition-all duration-300"
+            />
             <span className="text-2xl font-black neon-glow bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">JONNA RINCON</span>
           </Link>
 

@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { beatService } from '../../lib/firebase/services/beatService';
 import { Beat } from '../../lib/firebase/types';
-import Navigation from '../../components/Navigation';
+import CustomerLayout from '../../components/customer/CustomerLayout';
+import { Music, Play, Heart, Download } from 'lucide-react';
 
-const BeatsShop: React.FC = () => {
+const CustomerShop: React.FC = () => {
   const [beats, setBeats] = useState<Beat[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<{
@@ -68,18 +69,16 @@ const BeatsShop: React.FC = () => {
   const genres = ['Trap', 'Hip Hop', 'Drill', 'R&B', 'Pop', 'Electronic', 'Afrobeat'];
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      <Navigation />
-
-      <div className="container mx-auto px-4 pt-28 pb-12">
-        {/* Hero Section */}
-        <div className="mb-12 text-center">
-          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Premium Beats</h1>
-          <p className="text-xl text-gray-400">Explore high-quality beats by Jonna Rincon</p>
+    <CustomerLayout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-bold text-white">Shop Premium Beats</h1>
+          <p className="text-gray-400 mt-2">Browse and purchase high-quality beats by Jonna Rincon</p>
         </div>
 
         {/* Filters */}
-        <div className="mb-8 bg-gray-800 rounded-lg p-6">
+        <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {/* Search */}
             <input
@@ -87,14 +86,14 @@ const BeatsShop: React.FC = () => {
               placeholder="Search beats..."
               value={filter.search || ''}
               onChange={(e) => setFilter({ ...filter, search: e.target.value })}
-              className="bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:border-purple-500"
+              className="bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500"
             />
 
             {/* Genre Filter */}
             <select
               value={filter.genre || ''}
               onChange={(e) => setFilter({ ...filter, genre: e.target.value || undefined })}
-              className="bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:border-purple-500"
+              className="bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500"
             >
               <option value="">All Genres</option>
               {genres.map((genre) => (
@@ -110,7 +109,7 @@ const BeatsShop: React.FC = () => {
               onChange={(e) =>
                 setFilter({ ...filter, sortBy: e.target.value as typeof filter.sortBy })
               }
-              className="bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:border-purple-500"
+              className="bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500"
             >
               <option value="newest">Newest First</option>
               <option value="popular">Most Popular</option>
@@ -122,7 +121,7 @@ const BeatsShop: React.FC = () => {
             {(filter.genre || filter.search) && (
               <button
                 onClick={() => setFilter({ sortBy: 'newest' })}
-                className="bg-gray-700 hover:bg-gray-600 rounded-lg px-4 py-2 transition"
+                className="bg-gray-700 hover:bg-gray-600 rounded-lg px-4 py-2 text-white transition"
               >
                 Clear Filters
               </button>
@@ -133,21 +132,20 @@ const BeatsShop: React.FC = () => {
         {/* Beats Grid */}
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="text-xl">Loading beats...</div>
+            <div className="text-xl text-white">Loading beats...</div>
           </div>
         ) : beats.length === 0 ? (
-          <div className="text-center py-12 bg-gray-800 rounded-lg">
-            <div className="text-4xl mb-4">🎵</div>
-            <p className="text-xl mb-2">No beats found</p>
+          <div className="text-center py-12 bg-gray-800 border border-gray-700 rounded-xl">
+            <Music size={64} className="mx-auto mb-4 text-gray-600" />
+            <p className="text-xl text-white mb-2">No beats found</p>
             <p className="text-gray-400">Try adjusting your filters</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {beats.map((beat) => (
-              <Link
+              <div
                 key={beat.id}
-                to={`/shop/beats/${beat.id}`}
-                className="bg-gray-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-200"
+                className="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden hover:border-blue-500/50 transition-all hover:transform hover:scale-105"
               >
                 {/* Beat Artwork */}
                 <div className="relative">
@@ -166,11 +164,16 @@ const BeatsShop: React.FC = () => {
                       🔥 TRENDING
                     </div>
                   )}
+                  <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <button className="bg-blue-600 hover:bg-blue-700 rounded-full p-4 transition-all hover:scale-110">
+                      <Play size={32} className="text-white" />
+                    </button>
+                  </div>
                 </div>
 
                 {/* Beat Info */}
                 <div className="p-4">
-                  <h3 className="font-bold text-lg mb-2">{beat.title}</h3>
+                  <h3 className="font-bold text-lg mb-2 text-white">{beat.title}</h3>
                   <div className="text-sm text-gray-400 mb-3">{beat.artist}</div>
 
                   {/* Beat Details */}
@@ -184,38 +187,47 @@ const BeatsShop: React.FC = () => {
 
                   {/* Stats */}
                   <div className="flex items-center gap-4 text-xs text-gray-400 mb-4">
-                    <span>▶️ {beat.plays.toLocaleString()}</span>
-                    <span>❤️ {beat.likes.toLocaleString()}</span>
-                    <span>⬇️ {beat.downloads.toLocaleString()}</span>
+                    <span className="flex items-center gap-1">
+                      <Play size={12} /> {beat.plays.toLocaleString()}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Heart size={12} /> {beat.likes.toLocaleString()}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Download size={12} /> {beat.downloads.toLocaleString()}
+                    </span>
                   </div>
 
                   {/* Price */}
                   <div className="flex justify-between items-center pt-3 border-t border-gray-700">
                     <div>
                       <div className="text-xs text-gray-400">Starting at</div>
-                      <div className="font-bold text-lg">
+                      <div className="font-bold text-lg text-white">
                         €{beat.licenses.basic?.price.toFixed(2) || '0.00'}
                       </div>
                     </div>
-                    <div className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded transition">
+                    <Link
+                      to={`/customer/shop/${beat.id}`}
+                      className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 px-4 py-2 rounded-lg text-white font-medium transition-all"
+                    >
                       View Beat
-                    </div>
+                    </Link>
                   </div>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         )}
 
         {/* Results Count */}
         {!loading && beats.length > 0 && (
-          <div className="mt-8 text-center text-gray-400">
+          <div className="text-center text-gray-400">
             Showing {beats.length} beat{beats.length !== 1 ? 's' : ''}
           </div>
         )}
       </div>
-    </div>
+    </CustomerLayout>
   );
 };
 
-export default BeatsShop;
+export default CustomerShop;
