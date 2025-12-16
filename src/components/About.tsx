@@ -6,7 +6,7 @@ export default function About() {
           <div className="relative">
             <div className="absolute -inset-4 bg-gradient-to-r from-purple-600 to-purple-900 rounded-2xl blur-2xl opacity-30"></div>
             <img
-              src="/edied-j18.png"
+              src="/edited-j18.png"
               alt="Jonna Rincon"
               className="relative rounded-2xl shadow-2xl neon-border w-full"
             />
