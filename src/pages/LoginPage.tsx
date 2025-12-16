@@ -16,8 +16,16 @@ const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      await signIn(email, password);
-      navigate('/');
+      const user = await signIn(email, password);
+
+      // Redirect based on user role
+      if (user.role === 'admin') {
+        navigate('/admin/dashboard');
+      } else if (user.role === 'artist') {
+        navigate('/artist/dashboard');
+      } else {
+        navigate('/customer/dashboard');
+      }
     } catch (err: any) {
       setError(err.message || 'Failed to sign in');
     } finally {
