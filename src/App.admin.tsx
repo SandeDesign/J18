@@ -56,7 +56,7 @@ const AdminApp: React.FC = () => {
           <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
 
           {/* Catch all - redirect to login */}
-          <Route path="*" element={<Navigate to="/admin/login" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
