@@ -1,32 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { Store, Globe, Bell, Shield, Database, Save } from 'lucide-react';
+import { settingsService, ShopSettings, GeneralSettings, NotificationSettings, SecuritySettings } from '../../lib/firebase/services/settingsService';
 
 const AdminSettings: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'shop' | 'general' | 'notifications' | 'security'>('shop');
-  const [shopSettings, setShopSettings] = useState({
-    storeName: 'Jonna Rincon Beat Store',
-    storeDescription: 'Premium beats and music production by Jonna Rincon',
-    heroTitle: 'Premium Beats',
-    heroSubtitle: 'Explore high-quality beats by Jonna Rincon',
+  const [loading, setLoading] = useState(true);
+  const [shopSettings, setShopSettings] = useState<ShopSettings>({
+    storeName: '',
+    storeDescription: '',
+    heroTitle: '',
+    heroSubtitle: '',
     featuredEnabled: true,
     trendingEnabled: true,
-    genres: ['Trap', 'Hip Hop', 'Drill', 'R&B', 'Pop', 'Electronic', 'Afrobeat'],
+    genres: [],
     currency: 'EUR',
     taxRate: 21,
     enableDownloads: true,
     watermarkPreviews: true,
   });
 
-  const [generalSettings, setGeneralSettings] = useState({
-    platformName: 'Jonna Rincon',
-    supportEmail: 'support@jonna.com',
-    websiteUrl: 'https://jonna.com',
+  const [generalSettings, setGeneralSettings] = useState<GeneralSettings>({
+    platformName: '',
+    supportEmail: '',
+    websiteUrl: '',
     timezone: 'Europe/Amsterdam',
     language: 'en',
   });
 
-  const [notificationSettings, setNotificationSettings] = useState({
+  const [notificationSettings, setNotificationSettings] = useState<NotificationSettings>({
     emailOrderNotifications: true,
     emailCollaborationNotifications: true,
     emailAnalyticsReports: false,
@@ -35,7 +37,7 @@ const AdminSettings: React.FC = () => {
     pushNotifications: true,
   });
 
-  const [securitySettings, setSecuritySettings] = useState({
+  const [securitySettings, setSecuritySettings] = useState<SecuritySettings>({
     twoFactorEnabled: false,
     passwordMinLength: 12,
     sessionTimeout: 30,
@@ -45,10 +47,34 @@ const AdminSettings: React.FC = () => {
 
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        setLoading(true);
+        const [shopData, generalData, notificationData, securityData] = await Promise.all([
+          settingsService.getShopSettings(),
+          settingsService.getGeneralSettings(),
+          settingsService.getNotificationSettings(),
+          settingsService.getSecuritySettings(),
+        ]);
+
+        if (shopData) setShopSettings(shopData);
+        if (generalData) setGeneralSettings(generalData);
+        if (notificationData) setNotificationSettings(notificationData);
+        if (securityData) setSecuritySettings(securityData);
+      } catch (error) {
+        console.error('Failed to load settings:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadSettings();
+  }, []);
+
   const handleSaveShopSettings = async () => {
     try {
-      // TODO: Implement Firebase save logic
-      console.log('Saving shop settings:', shopSettings);
+      await settingsService.saveShopSettings(shopSettings);
       setMessage({ type: 'success', text: 'Shop settings saved successfully!' });
       setTimeout(() => setMessage(null), 3000);
     } catch (error) {
@@ -59,7 +85,7 @@ const AdminSettings: React.FC = () => {
 
   const handleSaveGeneralSettings = async () => {
     try {
-      console.log('Saving general settings:', generalSettings);
+      await settingsService.saveGeneralSettings(generalSettings);
       setMessage({ type: 'success', text: 'General settings saved successfully!' });
       setTimeout(() => setMessage(null), 3000);
     } catch (error) {
@@ -70,7 +96,7 @@ const AdminSettings: React.FC = () => {
 
   const handleSaveNotificationSettings = async () => {
     try {
-      console.log('Saving notification settings:', notificationSettings);
+      await settingsService.saveNotificationSettings(notificationSettings);
       setMessage({ type: 'success', text: 'Notification settings saved successfully!' });
       setTimeout(() => setMessage(null), 3000);
     } catch (error) {
@@ -81,7 +107,7 @@ const AdminSettings: React.FC = () => {
 
   const handleSaveSecuritySettings = async () => {
     try {
-      console.log('Saving security settings:', securitySettings);
+      await settingsService.saveSecuritySettings(securitySettings);
       setMessage({ type: 'success', text: 'Security settings saved successfully!' });
       setTimeout(() => setMessage(null), 3000);
     } catch (error) {
@@ -105,6 +131,12 @@ const AdminSettings: React.FC = () => {
           <h1 className="text-3xl font-bold text-white">Settings</h1>
           <p className="text-gray-400 mt-2">Manage your platform configuration and preferences</p>
         </div>
+
+        {loading && (
+          <div className="bg-blue-900/20 border border-blue-700 rounded-xl p-4">
+            <p className="text-blue-300">Loading settings...</p>
+          </div>
+        )}
 
         {/* Tabs */}
         <div className="bg-gray-800 border border-gray-700 rounded-xl p-4">
